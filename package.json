@@ -1,0 +1,19 @@
+{
+  "name": "community-synth-module",
+  "version": "0.0.0",
+  "description": "A Eurorack synth module controlled by lots of mobile phones.",
+  "main": "src/server/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andrewjensen/community-synth-module.git"
+  },
+  "author": "Andrew Jensen <andrewjensen90@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/andrewjensen/community-synth-module/issues"
+  },
+  "homepage": "https://github.com/andrewjensen/community-synth-module#readme"
+}
