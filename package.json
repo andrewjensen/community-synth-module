@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/andrewjensen/community-synth-module/issues"
   },
-  "homepage": "https://github.com/andrewjensen/community-synth-module#readme"
+  "homepage": "https://github.com/andrewjensen/community-synth-module#readme",
+  "dependencies": {
+    "express": "^4.14.0"
+  }
 }
