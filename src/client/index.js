@@ -63,6 +63,12 @@ class App extends Component {
 
     this._onChangeStep = this._onChangeStep.bind(this);
 
+    const socket = this.socket = io();
+
+    socket.on('connect', () => {
+      socket.emit('step:set', { step: 0, value: 0 });
+    });
+
     this.state = {
       steps: INITIAL_STEPS
     };

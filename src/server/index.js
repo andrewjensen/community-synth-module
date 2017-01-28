@@ -21,7 +21,16 @@ module.exports = (port) => {
   server.listen(port, () => {
     console.log(`Server listening on port ${port}`);
 
-    // TODO: setup the socket server here too
-    // const socketServer = require('./socketServer')(server)
+    const io = require('socket.io')(server);
+
+    io.on('connection', (socket) => {
+      console.log('got a connection!');
+
+      socket.on('step:set', (data) => {
+        const step = data.step;
+        const value = data.value;
+        console.log(`set step ${step} to ${value}`);
+      });
+    });
   });
 };
