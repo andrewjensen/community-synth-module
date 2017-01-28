@@ -18,6 +18,23 @@ module.exports = (port) => {
     res.sendFile(path.resolve(PUBLIC_DIR, 'index.html'));
   });
 
+  let _steps = [
+    36,
+    40,
+    43,
+    48,
+    60,
+    64,
+    67,
+    72,
+  ];
+
+  function getState() {
+    return {
+      steps: _steps
+    };
+  }
+
   server.listen(port, () => {
     console.log(`Server listening on port ${port}`);
 
@@ -26,10 +43,15 @@ module.exports = (port) => {
     io.on('connection', (socket) => {
       console.log('got a connection!');
 
-      socket.on('step:set', (data) => {
+      socket.on('client:initialize', () => {
+        socket.emit('server:initialize', getState());
+      });
+
+      socket.on('client:step:set', (data) => {
         const step = data.step;
         const value = data.value;
-        console.log(`set step ${step} to ${value}`);
+        _steps[step] = value;
+        io.emit('server:step:set', { step, value });
       });
     });
   });

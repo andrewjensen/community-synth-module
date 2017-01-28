@@ -18,16 +18,7 @@ const NOTE_NAMES = [
   'B'
 ];
 
-const INITIAL_STEPS = [
-  36,
-  40,
-  43,
-  48,
-  60,
-  64,
-  67,
-  72,
-];
+const INITIAL_STEPS = [0, 0, 0, 0, 0, 0, 0, 0];
 
 const CHANGE_INC = 'CHANGE_INC';
 const CHANGE_DEC = 'CHANGE_DEC';
@@ -43,9 +34,21 @@ function updateSteps(steps, index, action) {
   return steps.map((step, i) => {
     if (i !== index) return step;
 
-    // This is the step that changed!
-    if (action === CHANGE_INC) return increment(step);
-    else if (action === CHANGE_DEC) return decrement(step);
+    return updateStep(step, action);
+  });
+}
+
+function updateStep(value, action) {
+  if (action === CHANGE_INC) return increment(value);
+  else if (action === CHANGE_DEC) return decrement(value);
+}
+
+// TODO: combine with updateSteps() ?
+function updateStepsFromServer(steps, index, value) {
+  return steps.map((step, i) => {
+    if (i !== index) return step;
+
+    return value;
   });
 }
 
@@ -66,17 +69,38 @@ class App extends Component {
     const socket = this.socket = io();
 
     socket.on('connect', () => {
-      socket.emit('step:set', { step: 0, value: 0 });
+      socket.emit('client:initialize');
+    });
+
+    socket.on('server:initialize', (state) => {
+      this.setState({
+        loaded: true,
+        steps: state.steps
+      });
+    });
+
+    socket.on('server:step:set', (data) => {
+      const index = data.step;
+      const value = data.value;
+      this.setState({
+        steps: updateStepsFromServer(this.state.steps, index, value)
+      })
     });
 
     this.state = {
+      loaded: false,
       steps: INITIAL_STEPS
     };
   }
 
   _onChangeStep(index, action) {
+    const newSteps = updateSteps(this.state.steps, index, action);
+    this.socket.emit('client:step:set', {
+      step: index,
+      value: newSteps[index]
+    });
     this.setState({
-      steps: updateSteps(this.state.steps, index, action)
+      steps: newSteps
     });
   }
 
