@@ -87,9 +87,14 @@ class App extends Component {
       })
     });
 
+    socket.on('server:devices', (devices) => {
+      this.setState({ devices });
+    });
+
     this.state = {
       loaded: false,
-      steps: INITIAL_STEPS
+      steps: INITIAL_STEPS,
+      devices: 0,
     };
   }
 
@@ -105,13 +110,13 @@ class App extends Component {
   }
 
   render() {
-    const { loaded, steps } = this.state;
+    const { loaded, steps, devices } = this.state;
     if (loaded) {
       return (
         h('div', { className: 'App' },
           h(Header),
           h(Sequencer, { steps, onChangeStep: this._onChangeStep }),
-          h(Footer)
+          h(Footer, { devices })
         )
       );
     } else {
@@ -172,11 +177,12 @@ const LoadingScreen = (props) => {
 };
 
 const Footer = (props) => {
+  const { devices } = props;
   return (
     h('div', { className: 'Footer' },
       h('div', { className: 'Footer-info' },
         'Devices connected: ',
-        h('em', null, '3')
+        h('em', null, `${devices}`)
       ),
       h('div', { className: 'Footer-author' }, 'A crazy idea by Andrew Jensen')
     )

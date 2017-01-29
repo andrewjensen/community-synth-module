@@ -28,10 +28,12 @@ module.exports = (port) => {
     67,
     72,
   ];
+  let _devices = 0;
 
   function getState() {
     return {
-      steps: _steps
+      steps: _steps,
+      devices: _devices,
     };
   }
 
@@ -41,10 +43,15 @@ module.exports = (port) => {
     const io = require('socket.io')(server);
 
     io.on('connection', (socket) => {
-      console.log('got a connection!');
-
       socket.on('client:initialize', () => {
+        _devices++;
         socket.emit('server:initialize', getState());
+        io.emit('server:devices', _devices);
+      });
+
+      socket.on('disconnect', () => {
+        _devices--;
+        io.emit('server:devices', _devices);
       });
 
       socket.on('client:step:set', (data) => {
