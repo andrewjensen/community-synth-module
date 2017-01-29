@@ -1,3 +1,16 @@
+@media (max-width: 767px) {
+  html { font-size: 8px; }
+}
+
+@media (min-width: 768px) and (max-width: 1199px) {
+  html { font-size: 12px; }
+}
+
+@media (min-width: 1200px) {
+  html { font-size: 16px; }
+}
+
+
 html {
   font-family: 'helvetica', 'arial', 'sans-serif';
   width: 100%;
@@ -30,12 +43,13 @@ body {
   align-items: center;
 }
 .Header-title {
-  margin: 20px;
-  font-size: 36px;
+  margin: 1.5rem;
+  font-size: 2rem;
   font-weight: bold;
 }
 .Header-info {
-  margin: 20px;
+  margin: 1.5rem;
+  font-size: 1.5rem;
 }
 
 .Sequencer {
@@ -47,7 +61,7 @@ body {
 
 .Step {
   width: 12.5%;
-  margin-bottom: 20px;
+  margin-bottom: 1.5rem;
   margin-right: 4px;
   padding: 2px;
   display: flex;
@@ -56,26 +70,27 @@ body {
   border-radius: 3px;
 }
 .Step:first-child {
-  margin-left: 20px;
+  margin-left: 1.5rem;
 }
 .Step:last-child {
   margin-right: 0;
-  margin-right: 20px;
+  margin-right: 1.5rem;
 }
 .Step-label {
   text-align: center;
-  font-size: 48px;
+  font-size: 3rem;
   font-weight: bold;
-  padding: 10px 0;
+  padding: 0.5rem 0;
   cursor: default;
   user-select: none;
 }
 
 .StepButton {
-  padding: 20px 0;
+  padding: 1rem 0;
   background-color: #ccc;
+  border-radius: 2px;
   text-align: center;
-  font-size: 24px;
+  font-size: 2rem;
   cursor: pointer;
   user-select: none;
 }

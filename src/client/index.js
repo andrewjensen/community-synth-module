@@ -149,9 +149,9 @@ const Step = (props) => {
   const name = noteName(step);
   return (
     h('div', { className: 'Step' },
-      h(StepButton, { onClick: () => onChangeStep(index, CHANGE_INC) }, '^'),
+      h(StepButton, { onClick: () => onChangeStep(index, CHANGE_INC) }, '+'),
       h('div', { className: 'Step-label' }, name),
-      h(StepButton, { onClick: () => onChangeStep(index, CHANGE_DEC) }, 'v')
+      h(StepButton, { onClick: () => onChangeStep(index, CHANGE_DEC) }, '-')
     )
   );
 };
