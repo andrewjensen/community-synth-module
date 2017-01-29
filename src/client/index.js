@@ -110,7 +110,8 @@ class App extends Component {
       return (
         h('div', { className: 'App' },
           h(Header),
-          h(Sequencer, { steps, onChangeStep: this._onChangeStep })
+          h(Sequencer, { steps, onChangeStep: this._onChangeStep }),
+          h(Footer)
         )
       );
     } else {
@@ -127,8 +128,7 @@ class App extends Component {
 const Header = (props) => {
   return (
     h('div', { className: 'Header' },
-      h('div', { className: 'Header-title' }, 'Community Synth Module'),
-      h('div', { className: 'Header-info' }, 'Info')
+      h('div', { className: 'Header-title' }, 'Community')
     )
   );
 };
@@ -170,5 +170,17 @@ const LoadingScreen = (props) => {
     )
   );
 };
+
+const Footer = (props) => {
+  return (
+    h('div', { className: 'Footer' },
+      h('div', { className: 'Footer-info' },
+        'Devices connected: ',
+        h('em', null, '3')
+      ),
+      h('div', { className: 'Footer-author' }, 'A crazy idea by Andrew Jensen')
+    )
+  );
+}
 
 render(h(App), document.body);

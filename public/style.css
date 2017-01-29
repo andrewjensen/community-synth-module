@@ -33,6 +33,8 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  background-color: #B50E00;
+  color: #fff;
 }
 
 .Header {
@@ -44,12 +46,9 @@ body {
 }
 .Header-title {
   margin: 1.5rem;
-  font-size: 2rem;
+  font-size: 3rem;
   font-weight: bold;
-}
-.Header-info {
-  margin: 1.5rem;
-  font-size: 1.5rem;
+  letter-spacing: -0.08rem;
 }
 
 .Sequencer {
@@ -62,18 +61,18 @@ body {
 .Step {
   width: 12.5%;
   margin-bottom: 1.5rem;
-  margin-right: 4px;
-  padding: 2px;
+  margin-right: 8px;
   display: flex;
   flex-direction: column;
-  border: 2px solid #333;
-  border-radius: 3px;
+  padding-right: 8px;
+  border-right: 4px solid #fff;
 }
 .Step:first-child {
   margin-left: 1.5rem;
 }
 .Step:last-child {
-  margin-right: 0;
+  padding-right: 0;
+  border-right: none;
   margin-right: 1.5rem;
 }
 .Step-label {
@@ -83,11 +82,13 @@ body {
   padding: 0.5rem 0;
   cursor: default;
   user-select: none;
+  color: #fff;
 }
 
 .StepButton {
   padding: 1rem 0;
-  background-color: #ccc;
+  color: #B50E00;
+  background-color: #fff;
   border-radius: 2px;
   text-align: center;
   font-size: 2rem;
@@ -97,4 +98,23 @@ body {
 
 .LoadingScreen {
 
+}
+
+.Footer {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.5rem;
+}
+.Footer-info {
+  margin: 1.5rem;
+}
+.Footer-info em {
+  font-style: normal;
+  font-weight: bold;
+}
+.Footer-author {
+  margin: 1.5rem;
 }
