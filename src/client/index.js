@@ -105,20 +105,30 @@ class App extends Component {
   }
 
   render() {
-    const { steps } = this.state;
-    return (
-      h('div', { className: 'App' },
-        h(Header),
-        h(Sequencer, { steps, onChangeStep: this._onChangeStep })
-      )
-    );
+    const { loaded, steps } = this.state;
+    if (loaded) {
+      return (
+        h('div', { className: 'App' },
+          h(Header),
+          h(Sequencer, { steps, onChangeStep: this._onChangeStep })
+        )
+      );
+    } else {
+      return (
+        h('div', { className: 'App' },
+          h(LoadingScreen)
+        )
+      );
+
+    }
   }
 }
 
 const Header = (props) => {
   return (
     h('div', { className: 'Header' },
-      h('h1', null, 'Community Synth Module')
+      h('div', { className: 'Header-title' }, 'Community Synth Module'),
+      h('div', { className: 'Header-info' }, 'Info')
     )
   );
 };
@@ -150,6 +160,14 @@ const StepButton = (props) => {
   const { children, onClick } = props;
   return (
     h('div', { className: 'StepButton', onClick }, children)
+  );
+};
+
+const LoadingScreen = (props) => {
+  return (
+    h('div', { className: 'LoadingScreen' },
+      h('h1', null, 'Loading...')
+    )
   );
 };
 
