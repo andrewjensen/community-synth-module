@@ -3,17 +3,26 @@
 const express = require('express');
 const path = require('path');
 const Store = require('./store');
+const Synth = require('./synth');
 
 const PUBLIC_DIR = path.resolve(__dirname, '../../public');
 const CLIENT_SRC_DIR = path.resolve(__dirname, '../client');
 
+if (!process.env.COMMUNITY_SYNTH_USERNAME || !process.env.COMMUNITY_SYNTH_PASSWORD) {
+  throw new Error('Missing credentials for Particle!');
+}
+const username = process.env.COMMUNITY_SYNTH_USERNAME;
+const password = process.env.COMMUNITY_SYNTH_PASSWORD;
+
 module.exports = (port) => {
 
   const store = new Store();
+  const synth = new Synth();
 
   Promise.resolve()
+    .then(() => synth.login(username, password))
     .then(() => startServer(port))
-    .then(socketServer => handleSockets(socketServer, store));
+    .then(socketServer => handleSockets(socketServer, store, synth));
 };
 
 function startServer(port) {
@@ -42,7 +51,7 @@ function startServer(port) {
   });
 }
 
-function handleSockets(socketServer, store) {
+function handleSockets(socketServer, store, synth) {
   socketServer.on('connection', (socket) => {
     socket.on('client:initialize', () => {
       store.incrementDevices();
@@ -60,6 +69,7 @@ function handleSockets(socketServer, store) {
       const value = data.value;
       store.setStep(step, value);
       socketServer.emit('server:step:set', { step, value });
+      synth.setState(value);
     });
   });
 }
