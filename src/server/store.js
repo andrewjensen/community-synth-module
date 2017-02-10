@@ -30,7 +30,7 @@ class Store {
 
   incrementDevices() { this.devices++; }
 
-  decrementDevices() { this.devices++; }
+  decrementDevices() { this.devices--; }
 
   setStep(index, value) {
     this.steps[index] = value;
