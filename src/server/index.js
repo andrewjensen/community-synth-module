@@ -72,4 +72,9 @@ function handleSockets(socketServer, store, synth) {
       synth.setState(value);
     });
   });
+
+  synth.onConnect(() => {
+    console.log('Synth connecting...');
+    synth.initialize(store.getSteps());
+  });
 }

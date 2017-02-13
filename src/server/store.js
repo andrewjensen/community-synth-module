@@ -24,6 +24,8 @@ class Store {
     };
   }
 
+  getSteps() { return this.steps; }
+
   getDeviceCount() { return this.devices; }
 
   // ACTIONS -------------------------------------------------------------------

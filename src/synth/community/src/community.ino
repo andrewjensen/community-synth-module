@@ -1,22 +1,30 @@
 #define PIN D7
+#define SEQUENCE_LENGTH 8
 
 // STATE -----------------------------------------------------------------------
 
-int mode = 0;
-int rgbState = 0;
+int _index = 0;
+int _steps[8];
 
 // LIFECYCLE -------------------------------------------------------------------
 
 void setup() {
   pinMode(PIN, OUTPUT);
 
-  RGB.control(true);
+  // Initialize the steps
+  for (int i = 0; i < SEQUENCE_LENGTH; i++) {
+    _steps[i] = (i * 2) + 1; // TODO: something more reasonable
+  }
+
+  // RGB.control(true);
 
   Serial.begin(9600);
-
   Serial.println("Hello world!");
 
-  Particle.subscribe("set_state", onMessage);
+  Particle.subscribe("initialize", onInitialize);
+  Particle.subscribe("set_step", onSetStep);
+
+  Particle.publish("synth_connect");
 }
 
 void loop() {
@@ -27,33 +35,28 @@ void loop() {
 // INPUT SIGNAL HANDLERS -------------------------------------------------------
 
 void onClockSignal() {
-  Serial.println("Clock signal received!");
-  rgbState = !rgbState;
-  if (rgbState) {
-    if (mode) {
-      colorBlue();
-    } else {
-      colorGreen();
-    }
-  } else {
-    colorOff();
-  }
+  advanceStep();
+  int noteValue = _steps[_index];
+  Serial.printf("Step %d: Note %d\n", _index, noteValue);
+}
+
+void advanceStep() {
+  _index = ((_index + 1) % SEQUENCE_LENGTH);
 }
 
 // NETWORK EVENT HANDLERS ------------------------------------------------------
 
-void onMessage(const char *event, const char *data) {
-  if (strcmp(event, "set_state") == 0) {
-    handleSetState(data);
-  }
+void onInitialize(const char *event, const char *data) {
+  Serial.println("Initializing...");
+  Serial.println(data);
 }
 
-void handleSetState(const char *data) {
-  Serial.println("handling set_state");
+void onSetStep(const char *event, const char *data) {
+  Serial.println("handling set_step");
   if (strcmp(data, "on") == 0) {
-    mode = 1;
+    // Do stuff...
   } else if (strcmp(data, "off") == 0) {
-    mode = 0;
+    // Do stuff...
   }
 }
 
