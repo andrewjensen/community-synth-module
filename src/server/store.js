@@ -3,14 +3,14 @@
 class Store {
   constructor() {
     this.steps = [
-      36,
-      40,
-      43,
-      48,
-      60,
-      64,
-      67,
-      72,
+      0,
+      7,
+      12,
+      7,
+      0,
+      4,
+      7,
+      4,
     ];
     this.devices = 0;
   }

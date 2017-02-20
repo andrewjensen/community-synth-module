@@ -44,14 +44,12 @@ class Synth {
     return this.publish('initialize', steps.join(' '));
   }
 
-  // TODO: change this interface
-  setState(noteValue) {
+  setStep(index, noteValue) {
+    console.log(`Setting step ${index} to ${noteValue}`);
 
-    const synthState = (noteValue % 2 === 1 ? 'on' : 'off');
-    console.log('sending state:', synthState);
+    const payload = `${index} ${noteValue}`;
 
-    // TODO: actually send the step
-    return this.publish('set_step', synthState)
+    return this.publish('set_step', payload)
       .then(data => console.log('published:', data))
       .catch(err => console.error('Error publishing:', err));
   }

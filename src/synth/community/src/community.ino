@@ -62,11 +62,16 @@ void onInitialize(const char *event, const char *data) {
 
 void onSetStep(const char *event, const char *data) {
   Serial.println("handling set_step");
-  if (strcmp(data, "on") == 0) {
-    // Do stuff...
-  } else if (strcmp(data, "off") == 0) {
-    // Do stuff...
-  }
+
+  // Copy the data into a new string so we can mutate it
+  std::string temp = std::string(data);
+  char *tokenized = const_cast<char*>(temp.c_str());
+
+  int index = atoi(strtok(tokenized, " "));
+  int value = atoi(strtok(NULL, " "));
+
+  Serial.printf("Setting step %d to %d\n", index, value);
+  _steps[index] = value;
 }
 
 // I/O HELPERS -----------------------------------------------------------------

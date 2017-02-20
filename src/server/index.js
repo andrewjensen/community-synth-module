@@ -69,7 +69,7 @@ function handleSockets(socketServer, store, synth) {
       const value = data.value;
       store.setStep(step, value);
       socketServer.emit('server:step:set', { step, value });
-      synth.setState(value);
+      synth.setStep(step, value);
     });
   });
 
