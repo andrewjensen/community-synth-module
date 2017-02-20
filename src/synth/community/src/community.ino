@@ -1,5 +1,7 @@
 #define PIN D7
+#define OUTPUT_PIN DAC
 #define SEQUENCE_LENGTH 8
+#define VOLTAGE_MULTIPLIER 108
 
 // STATE -----------------------------------------------------------------------
 
@@ -12,9 +14,14 @@ void setup() {
   pinMode(PIN, OUTPUT);
 
   // Initialize the steps
-  for (int i = 0; i < SEQUENCE_LENGTH; i++) {
-    _steps[i] = (i * 2) + 1; // TODO: something more reasonable
-  }
+  _steps[0] = 0;
+  _steps[1] = 7;
+  _steps[2] = 12;
+  _steps[3] = 7;
+  _steps[4] = 0;
+  _steps[5] = 4;
+  _steps[6] = 7;
+  _steps[7] = 4;
 
   // RGB.control(true);
 
@@ -28,8 +35,9 @@ void setup() {
 }
 
 void loop() {
+  int noteTime = 250;
   onClockSignal();
-  delay(1000);
+  delay(noteTime);
 }
 
 // INPUT SIGNAL HANDLERS -------------------------------------------------------
@@ -38,6 +46,7 @@ void onClockSignal() {
   advanceStep();
   int noteValue = _steps[_index];
   Serial.printf("Step %d: Note %d\n", _index, noteValue);
+  sendNote(noteValue);
 }
 
 void advanceStep() {
@@ -61,6 +70,12 @@ void onSetStep(const char *event, const char *data) {
 }
 
 // I/O HELPERS -----------------------------------------------------------------
+
+void sendNote(int noteValue) {
+  int voltage = noteValue * VOLTAGE_MULTIPLIER;
+  Serial.printf("Sending value %d\n", voltage);
+  analogWrite(OUTPUT_PIN, voltage);
+}
 
 void lightOn() {
   digitalWrite(PIN, HIGH);
