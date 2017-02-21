@@ -38,6 +38,10 @@ function startServer(port) {
       res.sendFile(path.resolve(PUBLIC_DIR, 'index.html'));
     });
 
+    app.get('/ctrl', (req, res) => {
+      res.sendFile(path.resolve(PUBLIC_DIR, 'admin.html'));
+    });
+
     server.listen(port, (err) => {
       if (err) {
         console.error('Error starting server:', err);
@@ -52,15 +56,24 @@ function startServer(port) {
 }
 
 function handleSockets(socketServer, store, synth) {
+  const clientSockets = new WeakSet();
+
   socketServer.on('connection', (socket) => {
     socket.on('client:initialize', () => {
+      clientSockets.add(socket);
       store.incrementDevices();
       socket.emit('server:initialize', store.getState());
       socketServer.emit('server:devices', store.getDeviceCount());
     });
 
+    socket.on('admin:initialize', () => {
+      socket.emit('server:initialize', store.getState());
+    });
+
     socket.on('disconnect', () => {
-      store.decrementDevices();
+      if (clientSockets.has(socket)) {
+        store.decrementDevices();
+      }
       socketServer.emit('server:devices', store.getDeviceCount());
     });
 
