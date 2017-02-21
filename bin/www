@@ -1,2 +1,3 @@
 #!/usr/bin/env node
-require('../src/server')(3000);
+const port = process.env.PORT || 3000;
+require('../src/server')(port);
