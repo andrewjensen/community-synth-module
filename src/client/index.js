@@ -2,24 +2,28 @@
 
 const { Component, h, render } = preact;
 
-const { noteName } = Music;
+const {
+  noteName,
+  increment,
+  decrement,
+} = Music;
 
 const INITIAL_STEPS = [0, 0, 0, 0, 0, 0, 0, 0];
 
 const CHANGE_INC = 'CHANGE_INC';
 const CHANGE_DEC = 'CHANGE_DEC';
 
-function updateSteps(steps, index, action) {
+function updateSteps(steps, index, action, mode) {
   return steps.map((step, i) => {
     if (i !== index) return step;
 
-    return updateStep(step, action);
+    return updateStep(step, action, mode);
   });
 }
 
-function updateStep(value, action) {
-  if (action === CHANGE_INC) return increment(value);
-  else if (action === CHANGE_DEC) return decrement(value);
+function updateStep(value, action, mode) {
+  if (action === CHANGE_INC) return increment(value, mode);
+  else if (action === CHANGE_DEC) return decrement(value, mode);
 }
 
 // TODO: combine with updateSteps() ?
@@ -29,14 +33,6 @@ function updateStepsFromServer(steps, index, value) {
 
     return value;
   });
-}
-
-function increment(noteValue) {
-  return noteValue + 1;
-}
-
-function decrement(noteValue) {
-  return noteValue - 1;
 }
 
 class App extends Component {
@@ -90,7 +86,13 @@ class App extends Component {
   }
 
   _onChangeStep(index, action) {
-    const newSteps = updateSteps(this.state.steps, index, action);
+    const { steps, mode } = this.state;
+    const oldValue = steps[index];
+    const newSteps = updateSteps(steps, index, action, mode);
+    const newValue = newSteps[index];
+
+    if (newValue === oldValue) return;
+
     this.socket.emit('client:step:set', {
       step: index,
       value: newSteps[index]
