@@ -54,13 +54,18 @@ class App extends Component {
     socket.on('server:initialize', (state) => {
       this.setState({
         loaded: true,
-        steps: state.steps
+        steps: state.steps,
+        devices: state.devices,
+        mode: state.mode,
       });
     });
 
-    socket.on('server:steps', (steps) => {
+    socket.on('server:state', (state) => {
       this.setState({
-        steps: steps
+        loaded: true,
+        steps: state.steps,
+        devices: state.devices,
+        mode: state.mode,
       });
     });
 
@@ -80,6 +85,7 @@ class App extends Component {
       loaded: false,
       steps: INITIAL_STEPS,
       devices: 0,
+      mode: 'Chromatic',
     };
   }
 
