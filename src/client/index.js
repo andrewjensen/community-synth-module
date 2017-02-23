@@ -2,33 +2,12 @@
 
 const { Component, h, render } = preact;
 
-const NOTES_PER_OCTAVE = 12;
-const NOTE_NAMES = [
-  'C',
-  'C#',
-  'D',
-  'D#',
-  'E',
-  'F',
-  'F#',
-  'G',
-  'G#',
-  'A',
-  'A#',
-  'B'
-];
+const { noteName } = Music;
 
 const INITIAL_STEPS = [0, 0, 0, 0, 0, 0, 0, 0];
 
 const CHANGE_INC = 'CHANGE_INC';
 const CHANGE_DEC = 'CHANGE_DEC';
-
-function noteName(midiValue) {
-  const name = NOTE_NAMES[midiValue % NOTES_PER_OCTAVE];
-  const octave = Math.floor(midiValue / NOTES_PER_OCTAVE);
-  const result = name + octave;
-  return result;
-}
 
 function updateSteps(steps, index, action) {
   return steps.map((step, i) => {

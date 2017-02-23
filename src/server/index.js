@@ -7,6 +7,7 @@ const Synth = require('./synth');
 
 const PUBLIC_DIR = path.resolve(__dirname, '../../public');
 const CLIENT_SRC_DIR = path.resolve(__dirname, '../client');
+const LIB_DIR = path.resolve(__dirname, '../../lib');
 
 if (!process.env.COMMUNITY_SYNTH_USERNAME || !process.env.COMMUNITY_SYNTH_PASSWORD) {
   throw new Error('Missing credentials for Particle!');
@@ -33,6 +34,7 @@ function startServer(port) {
 
     app.use(express.static(PUBLIC_DIR));
     app.use('/src', express.static(CLIENT_SRC_DIR));
+    app.use('/lib', express.static(LIB_DIR));
 
     app.get('/', (req, res) => {
       res.sendFile(path.resolve(PUBLIC_DIR, 'index.html'));
