@@ -38,6 +38,20 @@ class Synth {
     this.onConnectCallback = callback;
   }
 
+  onAck(callback) {
+    this.onAckCallback = callback;
+
+    // TODO: actually send acks :)
+    this.sendAck();
+  }
+
+  sendAck() {
+    this.onAckCallback();
+
+    const waitTime = (Math.random() * 10000) + 2000;
+    setTimeout(() => this.sendAck(), waitTime);
+  }
+
   // SENDING DATA --------------------------------------------------------------
 
   initialize(steps) {

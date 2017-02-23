@@ -159,9 +159,30 @@ body {
 }
 
 .Counter {
+  margin-bottom: 1rem;
   font-size: 1.5rem;
 }
 .Counter em {
   font-style: normal;
+  font-weight: bold;
+}
+
+.Heartbeat {
+  font-size: 1.5rem;
+}
+.Heartbeat-message {
+  display: inline-block;
+}
+.Heartbeat-message > em {
+  font-style: normal;
+  font-weight: bold;
+}
+.Heartbeat-error {
+  display: inline-block;
+  margin-left: 1rem;
+  padding: 0 0.65rem;
+  border-radius: 9999px;
+  background-color: white;
+  color: #B50E00;
   font-weight: bold;
 }

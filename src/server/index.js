@@ -100,4 +100,8 @@ function handleSockets(socketServer, store, synth) {
     console.log('Synth connecting...');
     synth.initialize(store.getSteps());
   });
+
+  synth.onAck(() => {
+    socketServer.emit('server:ack');
+  });
 }

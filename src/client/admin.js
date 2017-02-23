@@ -43,11 +43,16 @@ class AdminApp extends Component {
       this.setState({ devices });
     });
 
+    socket.on('server:ack', () => {
+      this.setState({ lastAck: (new Date()) });
+    });
+
     this.state = {
       loaded: false,
       devices: 0,
       modes: MODES,
       selectedMode: INITIAL_MODE,
+      lastAck: null,
     };
   }
 
@@ -64,12 +69,14 @@ class AdminApp extends Component {
       devices,
       modes,
       selectedMode,
+      lastAck,
     } = this.state;
     if (loaded) {
       return (
         h('div', { className: 'AdminApp' },
           h(ModeMenu, { modes, selectedMode, onChangeMode: this._onChangeMode }),
-          h(Counter, { devices })
+          h(Counter, { devices }),
+          h(Heartbeat, { lastAck })
         )
       );
     } else {
@@ -116,6 +123,55 @@ const Counter = (props) => {
     )
   );
 };
+
+class Heartbeat extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      secondsAgo: 0
+    };
+  }
+
+  componentDidMount() {
+    this.clockInterval = setInterval(() => this.updateClock(), 1000);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.clockInterval);
+  }
+
+  updateClock() {
+    // console.log('updateClock');
+    const { lastAck } = this.props;
+    if (!lastAck) return;
+
+    const now = new Date();
+    this.setState({
+      secondsAgo: Math.floor((now - lastAck) / 1000)
+    });
+  }
+
+  render(props, state) {
+    const { lastAck } = props;
+    const { secondsAgo } = state;
+
+    const errorState = (!lastAck || secondsAgo > 10);
+    const message = (lastAck ? `${secondsAgo}sec ago` : 'Never');
+
+    return (
+      h('div', { className: 'Heartbeat' },
+        h('div', { className: 'Heartbeat-message' },
+          'Last ACK: ',
+          h('em', null, message)
+        ),
+        (errorState ? (
+          h('div', { className: 'Heartbeat-error' }, '!')
+        ) : null)
+      )
+    );
+  }
+}
 
 
 render(h(AdminApp), document.body);
