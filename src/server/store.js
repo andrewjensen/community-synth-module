@@ -13,6 +13,7 @@ class Store {
       4,
     ];
     this.devices = 0;
+    this.mode = 'Chromatic';
   }
 
   // ACCESSORS -----------------------------------------------------------------
@@ -20,7 +21,8 @@ class Store {
   getState() {
     return {
       steps: this.steps,
-      devices: this.devices
+      devices: this.devices,
+      mode: this.mode,
     };
   }
 
@@ -36,6 +38,11 @@ class Store {
 
   setStep(index, value) {
     this.steps[index] = value;
+  }
+
+  setMode(mode) {
+    this.mode = mode;
+    // TODO: adjust notes based on the new mode
   }
 }
 

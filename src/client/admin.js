@@ -27,6 +27,7 @@ class AdminApp extends Component {
         loaded: true,
         steps: state.steps,
         devices: state.devices,
+        selectedMode: state.mode,
       });
     });
 
@@ -53,6 +54,7 @@ class AdminApp extends Component {
   _onChangeMode(mode) {
     console.log('_onChangeMode', mode);
     this.setState({ selectedMode: mode });
+    this.socket.emit('admin:mode:set', { mode });
   }
 
   render() {

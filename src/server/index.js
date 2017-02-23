@@ -82,7 +82,15 @@ function handleSockets(socketServer, store, synth) {
       const value = data.value;
       store.setStep(step, value);
       socketServer.emit('server:step:set', { step, value });
-      synth.setStep(step, value);
+      // TODO: send the new state to the synth
+      // synth.setStep(step, value);
+    });
+
+    socket.on('admin:mode:set', (data) => {
+      const mode = data.mode;
+      store.setMode(mode);
+      socketServer.emit('server:steps', store.getSteps());
+      // TODO: send the new state to the synth
     });
   });
 

@@ -79,6 +79,12 @@ class App extends Component {
       });
     });
 
+    socket.on('server:steps', (steps) => {
+      this.setState({
+        steps: steps
+      });
+    });
+
     socket.on('server:step:set', (data) => {
       const index = data.step;
       const value = data.value;
