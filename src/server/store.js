@@ -1,5 +1,7 @@
 'use strict';
 
+const Music = require('../../lib/music');
+
 class Store {
   constructor() {
     this.steps = [
@@ -42,7 +44,7 @@ class Store {
 
   setMode(mode) {
     this.mode = mode;
-    // TODO: adjust notes based on the new mode
+    this.steps = this.steps.map(step => Music.snapToNearestAllowed(step, mode));
   }
 }
 
