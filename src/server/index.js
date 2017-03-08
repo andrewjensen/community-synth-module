@@ -18,7 +18,7 @@ const password = process.env.COMMUNITY_SYNTH_PASSWORD;
 module.exports = (port) => {
 
   const store = new Store();
-  const synth = new Synth();
+  const synth = new Synth(store.getSteps());
 
   Promise.resolve()
     .then(() => synth.login(username, password))
@@ -82,26 +82,49 @@ function handleSockets(socketServer, store, synth) {
     socket.on('client:step:set', (data) => {
       const step = data.step;
       const value = data.value;
+      console.log('[server] Received state change from client:', step, value);
+      const wasPreviouslyModified = store.getIsModified();
       store.setStep(step, value);
       socketServer.emit('server:step:set', { step, value });
-      // TODO: send the new state to the synth
-      // synth.setStep(step, value);
+      if (!wasPreviouslyModified && !store.getIsWaiting()) {
+        console.log('  Sending new state...');
+        store.setIsModified(false);
+        store.setIsWaiting(true);
+        synth.sendSteps(store.getSteps());
+      } else {
+        console.log('  the store has been modified, so just wait for an ack.');
+      }
     });
 
     socket.on('admin:mode:set', (data) => {
       const mode = data.mode;
+      const wasPreviouslyModified = store.getIsModified();
       store.setMode(mode);
       socketServer.emit('server:state', store.getState());
-      // TODO: send the new state to the synth
+      if (!wasPreviouslyModified && !store.getIsWaiting()) {
+        store.setIsModified(false);
+        store.setIsWaiting(true);
+        synth.sendSteps(store.getSteps());
+      }
     });
   });
 
   synth.onConnect(() => {
-    console.log('Synth connecting...');
+    console.log('[server] Handling synth connection...');
+    store.setIsModified(false);
+    store.setIsWaiting(true);
     synth.initialize(store.getSteps());
   });
 
   synth.onAck(() => {
+    console.log('[server] ack.');
+    store.setIsWaiting(false);
+    if (store.getIsModified()) {
+      console.log('  Sending new state...');
+      store.setIsModified(false);
+      store.setIsWaiting(true);
+      synth.sendSteps(store.getSteps());
+    }
     socketServer.emit('server:ack');
   });
 }

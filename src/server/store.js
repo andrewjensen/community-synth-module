@@ -16,6 +16,8 @@ class Store {
     ];
     this.devices = 0;
     this.mode = 'Chromatic';
+    this.isModified = false;
+    this.isWaiting = false;
   }
 
   // ACCESSORS -----------------------------------------------------------------
@@ -32,6 +34,10 @@ class Store {
 
   getDeviceCount() { return this.devices; }
 
+  getIsModified() { return this.isModified; }
+
+  getIsWaiting() { return this.isWaiting; }
+
   // ACTIONS -------------------------------------------------------------------
 
   incrementDevices() { this.devices++; }
@@ -40,11 +46,23 @@ class Store {
 
   setStep(index, value) {
     this.steps[index] = value;
+    this.setIsModified(true);
   }
 
   setMode(mode) {
     this.mode = mode;
     this.steps = this.steps.map(step => Music.snapToNearestAllowed(step, mode));
+    this.setIsModified(true);
+  }
+
+  setIsModified(isModified) {
+    console.log('  setIsModified', isModified);
+    this.isModified = isModified;
+  }
+
+  setIsWaiting(isWaiting) {
+    console.log('  setIsWaiting', isWaiting);
+    this.isWaiting = isWaiting;
   }
 }
 

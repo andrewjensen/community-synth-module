@@ -29,7 +29,7 @@ void setup() {
   Serial.println("Hello world!");
 
   Particle.subscribe("initialize", onInitialize);
-  Particle.subscribe("set_step", onSetStep);
+  Particle.subscribe("set_steps", onSetSteps);
 
   Particle.publish("synth_connect");
 }
@@ -58,6 +58,7 @@ void advanceStep() {
 void onInitialize(const char *event, const char *data) {
   Serial.println("Initializing...");
   Serial.println(data);
+  sendAck();
 }
 
 void onSetStep(const char *event, const char *data) {
@@ -72,6 +73,26 @@ void onSetStep(const char *event, const char *data) {
 
   Serial.printf("Setting step %d to %d\n", index, value);
   _steps[index] = value;
+}
+
+void onSetSteps(const char *event, const char *data) {
+  Serial.println("handling set_steps");
+
+  // Copy the data into a new string so we can mutate it
+  std::string temp = std::string(data);
+  char *tokenized = const_cast<char*>(temp.c_str());
+
+  _steps[0] = atoi(strtok(tokenized, " "));
+  for (int i = 1; i < 8; i++) {
+    _steps[i] = atoi(strtok(NULL, " "));
+  }
+
+  Serial.printf("Setting steps: %s\n", data);
+  sendAck();
+}
+
+void sendAck() {
+  Particle.publish("synth_ack");
 }
 
 // I/O HELPERS -----------------------------------------------------------------

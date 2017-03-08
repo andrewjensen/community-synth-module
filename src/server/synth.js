@@ -3,7 +3,7 @@
 const Particle = require('particle-api-js');
 
 class Synth {
-  constructor() {
+  constructor(initialSteps) {
     this.particle = new Particle();
     this.token = '';
     this.onConnectCallback = () => {};
@@ -18,14 +18,17 @@ class Synth {
       .then(() => {
         return this.particle.getEventStream({
           deviceId: 'mine',
-          name: 'synth_connect',
           auth: this.token
         });
       })
       .then(eventStream => {
         eventStream.on('synth_connect', () => {
-          console.log('Synth connecting...');
+          console.log('[synth]  Connecting...');
           this.onConnectCallback();
+          this.modified = false;
+        });
+        eventStream.on('synth_ack', () => {
+          this.onAckCallback();
         });
       })
       .catch(err => {
@@ -40,41 +43,39 @@ class Synth {
 
   onAck(callback) {
     this.onAckCallback = callback;
-
-    // TODO: actually send acks :)
-    this.sendAck();
   }
-
-  sendAck() {
-    this.onAckCallback();
-
-    const waitTime = (Math.random() * 10000) + 2000;
-    setTimeout(() => this.sendAck(), waitTime);
-  }
-
-  // SENDING DATA --------------------------------------------------------------
 
   initialize(steps) {
-    return this.publish('initialize', steps.join(' '));
+    console.log('[synth]  Initializing...');
+    return _initialize(steps, this.particle, this.token);
   }
 
-  setStep(index, noteValue) {
-    console.log(`Setting step ${index} to ${noteValue}`);
-
-    const payload = `${index} ${noteValue}`;
-
-    return this.publish('set_step', payload)
-      .then(data => console.log('published:', data))
-      .catch(err => console.error('Error publishing:', err));
+  sendSteps(steps) {
+    console.log('[synth]  Sending steps...');
+    return _sendSteps(steps, this.particle, this.token);
   }
+}
 
-  publish(eventName, eventData) {
-    return this.particle.publishEvent({
-      name: eventName,
-      data: eventData,
-      auth: this.token
-    });
-  }
+// SENDING DATA ----------------------------------------------------------------
+
+function _initialize(steps, particle, token) {
+  return _publish('initialize', steps.join(' '), particle, token)
+    .then(data => console.log('  sent initialization:', data))
+    .catch(err => console.error('Error publishing:', err));
+}
+
+function _sendSteps(steps, particle, token) {
+  return _publish('set_steps', steps.join(' '), particle, token)
+    .then(data => console.log('  sent steps:', data))
+    .catch(err => console.error('Error publishing:', err));
+}
+
+function _publish(eventName, eventData, particle, token) {
+  return particle.publishEvent({
+    name: eventName,
+    data: eventData,
+    auth: token
+  });
 }
 
 module.exports = Synth;
