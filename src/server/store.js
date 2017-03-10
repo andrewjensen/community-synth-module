@@ -4,6 +4,7 @@ const Music = require('../../lib/music');
 
 class Store {
   constructor() {
+    this._listeners = [];
     this.steps = [
       0,
       7,
@@ -18,6 +19,20 @@ class Store {
     this.mode = 'Chromatic';
     this.isModified = false;
     this.isWaiting = false;
+  }
+
+  // SUBSCRIPTIONS -------------------------------------------------------------
+
+  onStepsUpdated(listener) {
+    this._listeners.push(listener);
+    const unsubscribeFn = () => {
+      this._listeners = this._listeners.filter(l => l !== listener);
+    };
+    return unsubscribeFn;
+  }
+
+  triggerListeners() {
+    this._listeners.forEach(listener => listener());
   }
 
   // ACCESSORS -----------------------------------------------------------------
@@ -47,12 +62,14 @@ class Store {
   setStep(index, value) {
     this.steps[index] = value;
     this.setIsModified(true);
+    this.triggerListeners();
   }
 
   setMode(mode) {
     this.mode = mode;
     this.steps = this.steps.map(step => Music.snapToNearestAllowed(step, mode));
     this.setIsModified(true);
+    this.triggerListeners();
   }
 
   setIsModified(isModified) {

@@ -1,16 +1,24 @@
 'use strict';
 
+const Synth = require('./Synth');
+
 const Particle = require('particle-api-js');
 
-class Synth {
-  constructor(initialSteps) {
+class NetworkSynth extends Synth {
+  constructor(initialSteps, username, password) {
+    super(initialSteps);
+    this.username = username;
+    this.password = password;
     this.particle = new Particle();
     this.token = '';
     this.onConnectCallback = () => {};
   }
 
-  login(username, password) {
-    return this.particle.login({ username, password })
+  setup() {
+    return this.particle.login({
+      username: this.username,
+      password: this.password,
+    })
       .then(data => {
         console.log('Logged into Particle');
         this.token = data.body.access_token;
@@ -38,7 +46,10 @@ class Synth {
   }
 
   onConnect(callback) {
-    this.onConnectCallback = callback;
+    console.log('[synth] Handling synth connection...');
+    // store.setIsModified(false);
+    // store.setIsWaiting(true);
+    // synth.initialize(store.getSteps());
   }
 
   onAck(callback) {
@@ -78,4 +89,4 @@ function _publish(eventName, eventData, particle, token) {
   });
 }
 
-module.exports = Synth;
+module.exports = NetworkSynth;

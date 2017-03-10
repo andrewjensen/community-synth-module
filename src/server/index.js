@@ -18,10 +18,10 @@ const password = process.env.COMMUNITY_SYNTH_PASSWORD;
 module.exports = (port) => {
 
   const store = new Store();
-  const synth = new Synth(store.getSteps());
+  const synth = Synth.createNetworkSynth(store.getSteps(), username, password);
 
   Promise.resolve()
-    .then(() => synth.login(username, password))
+    .then(() => synth.setup())
     .then(() => startServer(port))
     .then(socketServer => handleSockets(socketServer, store, synth));
 };
@@ -83,37 +83,15 @@ function handleSockets(socketServer, store, synth) {
       const step = data.step;
       const value = data.value;
       console.log('[server] Received state change from client:', step, value);
-      const wasPreviouslyModified = store.getIsModified();
       store.setStep(step, value);
       socketServer.emit('server:step:set', { step, value });
-      if (!wasPreviouslyModified && !store.getIsWaiting()) {
-        console.log('  Sending new state...');
-        store.setIsModified(false);
-        store.setIsWaiting(true);
-        synth.sendSteps(store.getSteps());
-      } else {
-        console.log('  the store has been modified, so just wait for an ack.');
-      }
     });
 
     socket.on('admin:mode:set', (data) => {
       const mode = data.mode;
-      const wasPreviouslyModified = store.getIsModified();
       store.setMode(mode);
       socketServer.emit('server:state', store.getState());
-      if (!wasPreviouslyModified && !store.getIsWaiting()) {
-        store.setIsModified(false);
-        store.setIsWaiting(true);
-        synth.sendSteps(store.getSteps());
-      }
     });
-  });
-
-  synth.onConnect(() => {
-    console.log('[server] Handling synth connection...');
-    store.setIsModified(false);
-    store.setIsWaiting(true);
-    synth.initialize(store.getSteps());
   });
 
   synth.onAck(() => {
@@ -125,6 +103,7 @@ function handleSockets(socketServer, store, synth) {
       store.setIsWaiting(true);
       synth.sendSteps(store.getSteps());
     }
+    // TODO: how do we handle this after the refactor?
     socketServer.emit('server:ack');
   });
 }
